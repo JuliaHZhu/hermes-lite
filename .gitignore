@@ -5,3 +5,5 @@ venv/
 .DS_Store
 config.json
 state.db
+.skills_cache.json
+
