@@ -1,7 +1,6 @@
-# Hermes Lite
+# Worker Bee
 
-> Extracted from [Hermes Agent](https://github.com/NousResearch/hermes-agent).
-> We took skills. We added Deck. That's it.
+> Worker bee, not swiss army knife. **One Agent + One Board.**
 
 A minimal AI agent framework. ~1,300 lines of Python. 9 files.
 
@@ -45,11 +44,17 @@ tools:
 
 ### Deck
 
-The Deck is an immutable, pre-procured tool set. Before each turn, hermes-lite matches skills against your input, collects their declared tools, and builds a Deck. The LLM can only use tools in the Deck — no cross-domain mistakes.
+The Deck is an immutable, pre-procured tool set. Before each turn, Worker Bee matches skills against your input, collects their declared tools, and builds a Deck. The LLM can only use tools in the Deck — no cross-domain mistakes.
 
 ```
 your input → trigger match → collect tools → build Deck → LLM runs inside the Deck
 ```
+
+## Design
+
+- **Human-in-loop**: Worker bee executes; you supervise. No autonomous orchestration.
+- **Exogenous pheromone**: All state is human-readable text (Markdown). No hidden databases.
+- **Fixed patterns over dynamic config**: The Deck adds a fixed +3 redundancy slot. Predictable beats flexible.
 
 ## Config
 
