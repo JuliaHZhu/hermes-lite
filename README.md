@@ -1,82 +1,66 @@
 # Hermes Lite
 
-> From Hermes we took skills. We added Deck. That's it.
+> Extracted from [Hermes Agent](https://github.com/NousResearch/hermes-agent).
+> We took skills. We added Deck. That's it.
 
 A minimal AI agent framework. ~1,300 lines of Python. 9 files.
 
-## 是什么
+## What's inside
 
 ```
-agent.py      225 行   双协议 Agent 循环（Anthropic / OpenAI）
-registry.py   190 行   工具注册中心
-skills.py     256 行   Skill 加载 + trigger 匹配
-deck.py       106 行   不可变工具栈
-main.py       137 行   CLI 入口
-tools/                fs_read_file, fs_write_file, fs_search_files,
-                      sys_terminal, net_web_search, net_web_extract
-skills/               （空目录，用户自己写 skill 文件）
+agent.py       Dual-protocol agent loop (Anthropic / OpenAI)
+registry.py    Tool registry — name, description, parameters, handler
+skills.py      Skill loader — YAML frontmatter + trigger matching
+deck.py        Immutable tool boundary — the Deck
+main.py        CLI — ping and interactive chat
+tools/         read, write, search files · terminal · web search
+skills/        Add your skill .md files here
 ```
 
-## 不是什么
-
-- 不是 Worker Bee（没有 cron、没有 job supervisor、没有飞书推送）
-- 不是 Claude Code（没有 sandbox、没有 TUI、没有 MCP）
-- 不是 LangChain（没有 chain、没有 prompt template、没有 RAG 抽象）
-
-就一个 Agent + 工具注册 + Skill 匹配 + Deck 装填。
-
-## 30 秒跑起来
+## 30 seconds
 
 ```bash
 pip install anthropic openai
-
 export HERMES_API_KEY=sk-...
-export HERMES_MODEL=claude-sonnet-4-20250514  # optional
-
-python main.py -m "hello world"   # ping 测试
-python main.py                     # 开始对话
+python main.py -m "hello world"   # ping
+python main.py                     # chat
 ```
 
-## 核心概念
+## Concepts
 
-### Skill = 契约
+### Skill
+
+A skill declares **when** to activate and **what** tools it needs:
 
 ```yaml
 ---
 name: web-research
-description: Search the web and summarize findings.
-trigger: search, look up, research, find online
+description: Search the web and summarize.
+trigger: search, look up, research
 tools:
   - net_web_search
   - net_web_extract
 ---
 ```
 
-### Deck = 运行时工具边界
+### Deck
+
+The Deck is an immutable, pre-procured tool set. Before each turn, hermes-lite matches skills against your input, collects their declared tools, and builds a Deck. The LLM can only use tools in the Deck — no cross-domain mistakes.
 
 ```
-用户输入 → trigger 匹配 → 收集 skills 声明的 tools → Deck 装填 → LLM 只能从 Deck 里抽工具
+your input → trigger match → collect tools → build Deck → LLM runs inside the Deck
 ```
 
-所有工具都在 Registry 里，但 LLM 每次任务只能看到 Deck 里的那几个。不会用写文件工具去查天气。
+## Config
 
-## 架构
+All via environment variables:
 
-```
-main.py (CLI)
-    │
-    ├─ SkillManager.match_skills(user_input)
-    │       │
-    │       └─ matched skills → get_tools_for_skills()
-    │               │
-    │               └─ skill_tools → build_deck() → Deck
-    │
-    └─ AIAgent.run(messages, deck=deck)
-            │
-            ├─ LLM API call (Anthropic or OpenAI)
-            ├─ tool_calls? → registry.call(name, args) → loop
-            └─ text → return to user
-```
+| Variable | Required | Default |
+|----------|----------|---------|
+| `HERMES_API_KEY` | yes | — |
+| `HERMES_PROVIDER` | no | `anthropic` |
+| `HERMES_MODEL` | no | `claude-sonnet-4-20250514` |
+| `HERMES_BASE_URL` | no | — |
 
 ## License
 
