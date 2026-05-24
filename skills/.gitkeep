@@ -1,0 +1,14 @@
+# Placeholder — add your skill .md files here.
+# Skill format: YAML frontmatter + markdown body.
+#
+# Example:
+# ---
+# name: my-skill
+# description: What this skill does.
+# trigger: keyword1, keyword2
+# tools:
+#   - fs_read_file
+#   - sys_terminal
+# ---
+# # My Skill
+# Instructions for the LLM...

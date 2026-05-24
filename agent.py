@@ -12,7 +12,7 @@ from registry import registry
 class AIAgent:
     def __init__(self, config: dict):
         self.config = config
-        self.model = config.get("model", "kimi-k2.6")
+        self.model = config.get("model", "claude-sonnet-4-20250514")
         self.max_iterations = config.get("max_iterations", 30)
         self.system_prompt = config.get("system_prompt", "You are a helpful assistant with tool access.")
         self.enabled_tools = config.get("tools", [])

@@ -2,7 +2,7 @@
 
 > From Hermes we took skills. We added Deck. That's it.
 
-A minimal AI agent framework. 1,350 lines of Python. 10 files.
+A minimal AI agent framework. ~1,300 lines of Python. 9 files.
 
 ## 是什么
 

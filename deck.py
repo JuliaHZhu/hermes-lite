@@ -15,8 +15,9 @@ BASELINE_POOL = [
     "fs_read_file",
     "fs_search_files",
     "sys_terminal",
-    "send_message",
-    "cronjob",
+    "net_web_search",
+    "net_web_extract",
+    "fs_write_file",
 ]
 
 
