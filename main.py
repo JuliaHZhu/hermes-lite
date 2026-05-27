@@ -4,12 +4,18 @@
 Usage:
     python main.py              Start interactive session
     python main.py -m "hello"   Quick model ping test
+    python main.py -v           Show version
 
-Config via env vars:
-    HERMES_API_KEY              API key (required)
-    HERMES_PROVIDER             anthropic (default) or openai
-    HERMES_MODEL                model name
-    HERMES_BASE_URL             optional base URL override
+Options:
+    -m, --ping MSG              Quick model ping test
+    -v, --version               Show version
+    -h, --help                  Show this help
+
+Config:
+    export HERMES_API_KEY=sk-...
+    export HERMES_PROVIDER=openai       # or anthropic
+    export HERMES_MODEL=kimi-k2.6
+    export HERMES_BASE_URL=https://api.moonshot.cn/v1
 """
 
 import argparse, os, sys
@@ -29,10 +35,10 @@ def load_config():
     if not key:
         return None
     return {
-        "provider": os.environ.get("HERMES_PROVIDER", "anthropic"),
-        "model": os.environ.get("HERMES_MODEL", "claude-sonnet-4-20250514"),
+        "provider": os.environ.get("HERMES_PROVIDER", "openai"),
+        "model": os.environ.get("HERMES_MODEL", "kimi-k2.6"),
         "api_key": key,
-        "base_url": os.environ.get("HERMES_BASE_URL"),
+        "base_url": os.environ.get("HERMES_BASE_URL", "https://api.moonshot.cn/v1"),
         "max_iterations": 20,
         "system_prompt": (
             "You are a helpful assistant with tool access. "
@@ -58,7 +64,8 @@ def run_session():
     if not config:
         sys.exit("❌ Set HERMES_API_KEY env var.\n"
                  "  export HERMES_API_KEY=sk-...\n"
-                 "  export HERMES_MODEL=claude-sonnet-4-20250514  # optional")
+                 "  export HERMES_PROVIDER=openai      # optional\n"
+                 "  export HERMES_MODEL=kimi-k2.6      # optional")
 
     agent = AIAgent(config)
     skill_mgr = SkillManager()
@@ -83,7 +90,8 @@ def run_session():
             print("Commands: /exit, /tools, /skills, /clear, /help"); continue
         if ui.lower() == "/tools":
             for cat, names in sorted(registry.list_by_category().items()):
-                print(f"  [{cat}] {', '.join(names)}"); continue
+                print(f"  [{cat}] {', '.join(names)}")
+            continue
         if ui.lower() == "/skills":
             skills = skill_mgr.list_skills()
             if skills:
@@ -92,7 +100,8 @@ def run_session():
                     tl = f"  tools: {', '.join(meta.get('tools',[]))}" if meta.get("tools") else ""
                     print(f"  • {name}: {meta.get('description','')}{t}{tl}")
             else:
-                print("No skills. Add .md files to skills/"); continue
+                print("No skills. Add .md files to skills/")
+            continue
         if ui.lower() == "/clear":
             messages = []; print("Cleared."); continue
 
